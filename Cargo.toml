@@ -1,0 +1,17 @@
+[package]
+name = "rpg"
+version = "0.1.0"
+authors = ["jerome.jutteau <jerome.jutteau@outscale.com>"]
+
+[dependencies]
+rocket = "0.2.8"
+rocket_codegen = "0.2.8"
+rocket_contrib = "0.2.8"
+serde = "0.9"
+serde_json = "0.9"
+serde_derive = "0.9"
+pg = { git = "https://github.com/outscale/pg.git" }
+#pg = { path = "../pg" }
+
+[dev-dependencies]
+rocket = { version = "0.2.8", features = ["testing"] }

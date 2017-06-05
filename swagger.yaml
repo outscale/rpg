@@ -1,0 +1,607 @@
+swagger: '2.0'
+info:
+  description: >-
+    RPG is a simple API allowing to create and manage network bricks. Each
+    bricks type have a specific fonctionality (like a switch or a firewall).
+    Bricks can be connected to form a network graph.
+  version: 0.1.0
+  title: Remote Packetgraph
+  contact:
+    email: opensource@outscale.com
+  license:
+    name: GPLv3
+    url: 'https://www.gnu.org/licenses/gpl.html'
+host: localhost
+basePath: /
+tags:
+  - name: graph
+    description: Manage graphs
+  - name: brick
+    description: Manage bricks
+  - name: firewall
+    description: Make operations on a firewall brick
+  - name: api
+    description: API related calls
+schemes:
+  - http
+paths:
+  /:
+    get:
+      tags:
+        - api
+      summary: Get API informations
+      operationId: apiDescription
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: API Description
+          schema:
+            $ref: '#/definitions/ApiDescription'
+  /graph:
+    get:
+      tags:
+        - graph
+      summary: Get the list of running graph
+      description: ''
+      operationId: getGraphs
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Graph'
+  /graph/new:
+    get:
+      tags:
+        - graph
+      summary: Create a new graph
+      description: ''
+      operationId: newGraph
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: name
+          required: true
+          type: string
+          description: Name of the Graph
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Result'
+  '/graph/{GraphName}':
+    get:
+      tags:
+        - graph
+      summary: Get a description of the graph
+      description: ''
+      operationId: getGraph
+      produces:
+        - application/json
+      parameters:
+        - name: GraphName
+          in: path
+          description: Name of the Graph to describe
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Graph Description
+          schema:
+            $ref: '#/definitions/GraphDescription'
+  '/graph/{GraphName}/delete':
+    get:
+      tags:
+        - graph
+      summary: Delete a new graph and all it's bricks
+      description: ''
+      operationId: deleteGraph
+      produces:
+        - application/json
+      parameters:
+        - name: GraphName
+          in: path
+          description: Name of the Graph to delete
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Result'
+  '/graph/{GraphName}/dot':
+    get:
+      tags:
+        - graph
+      summary: Get a dot (graphviz) representation of a graph
+      description: ''
+      operationId: dotGraph
+      produces:
+        - text/plain
+      parameters:
+        - name: GraphName
+          in: path
+          description: Graph to represent in dot
+          required: true
+          type: string
+      responses:
+        '200':
+          description: dot graph
+  '/graph/{GraphName}/svg':
+    get:
+      tags:
+        - graph
+      summary: Get a svg representation of a graph made by dot (graphviz)
+      description: ''
+      operationId: svgGraph
+      produces:
+        - image/svg+xml
+      parameters:
+        - name: GraphName
+          in: path
+          description: Graph to represent in svg
+          required: true
+          type: string
+      responses:
+        '200':
+          description: svg image
+  '/graph/{GraphName}/brick/new/hub':
+    get:
+      tags:
+        - brick
+      summary: Create a new Hub brick
+      description: ''
+      operationId: newHub
+      produces:
+        - application/json
+      parameters:
+        - name: GraphName
+          in: path
+          description: Name of the Graph
+          required: true
+          type: string
+        - in: query
+          name: name
+          required: true
+          type: string
+          description: Name of the brick
+        - in: query
+          name: west_ports
+          required: true
+          type: integer
+          minimum: 0
+          description: Number of ports on the WEST side of the hub
+        - in: query
+          name: east_ports
+          required: true
+          type: integer
+          minimum: 0
+          description: Number of ports on the EAST side of the hub
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Result'
+  '/graph/{GraphName}/brick/new/switch':
+    get:
+      tags:
+        - brick
+      summary: Create a new Switch brick
+      description: ''
+      operationId: newSwitch
+      produces:
+        - application/json
+      parameters:
+        - name: GraphName
+          in: path
+          description: Name of the Graph
+          required: true
+          type: string
+        - in: query
+          name: name
+          required: true
+          type: string
+          description: Name of the brick
+        - in: query
+          name: west_ports
+          required: true
+          type: integer
+          minimum: 0
+          description: Number of ports on the WEST side of the switch
+        - in: query
+          name: east_ports
+          required: true
+          type: integer
+          minimum: 0
+          description: Number of ports on the EAST side of the switch
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Result'
+  '/graph/{GraphName}/brick/new/nic':
+    get:
+      tags:
+        - brick
+      summary: Create a new Nic brick
+      description: You should either set vdev or port parameter
+      operationId: newNic
+      produces:
+        - application/json
+      parameters:
+        - name: GraphName
+          in: path
+          description: Name of the Graph
+          required: true
+          type: string
+        - in: query
+          name: name
+          required: true
+          type: string
+          description: Name of the brick
+        - in: query
+          name: vdev
+          required: false
+          type: string
+          minimum: 0
+          description: >-
+            vdev description as expressed in DPDK's EAL command line. For
+            example: eth_pcap0,iface=eth0. Parameters depends on PMD. For ring
+            PMD, check
+            http://dpdk.org/doc/guides-1.8/prog_guide/libpcap_ring_based_poll_mode_drv.html
+        - in: query
+          name: port
+          required: false
+          type: integer
+          minimum: 0
+          description: DPDK port number to use
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Result'
+  '/graph/{GraphName}/brick/new/tap':
+    get:
+      tags:
+        - brick
+      summary: Create a new Tap brick
+      operationId: newTap
+      produces:
+        - application/json
+      parameters:
+        - name: GraphName
+          in: path
+          description: Name of the Graph
+          required: true
+          type: string
+        - in: query
+          name: name
+          required: true
+          type: string
+          description: Name of the brick
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Result'
+  '/graph/{GraphName}/brick/new/firewall':
+    get:
+      tags:
+        - brick
+      summary: Create a new Firewall brick
+      operationId: newFirewall
+      produces:
+        - application/json
+      parameters:
+        - name: GraphName
+          in: path
+          description: Name of the Graph
+          required: true
+          type: string
+        - in: query
+          name: name
+          required: true
+          type: string
+          description: Name of the brick
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Result'
+  '/graph/{GraphName}/brick/new/nop':
+    get:
+      tags:
+        - brick
+      summary: Create a new Nop brick
+      operationId: newNop
+      produces:
+        - application/json
+      parameters:
+        - name: GraphName
+          in: path
+          description: Name of the Graph
+          required: true
+          type: string
+        - in: query
+          name: name
+          required: true
+          type: string
+          description: Name of the brick
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Result'
+  '/graph/{GraphName}/brick/{BrickName}':
+    get:
+      tags:
+        - brick
+      summary: Show details on a brick
+      operationId: getBrick
+      produces:
+        - application/json
+      parameters:
+        - name: GraphName
+          in: path
+          description: Name of the Graph
+          required: true
+          type: string
+        - name: BrickName
+          in: path
+          description: Name of the Brick
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/BrickDescription'
+  '/graph/{GraphName}/brick/{BrickName}/delete':
+    get:
+      tags:
+        - brick
+      summary: >-
+        Delete a brick from a graph. This will also unlink all bricks connected
+        to it
+      operationId: deleteBrick
+      produces:
+        - application/json
+      parameters:
+        - name: GraphName
+          in: path
+          description: Name of the Graph
+          required: true
+          type: string
+        - name: BrickName
+          in: path
+          description: Name of the Brick
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Result'
+  '/graph/{GraphName}/brick/link':
+    get:
+      tags:
+        - brick
+      summary: Links two bricks together
+      operationId: linkBrick
+      produces:
+        - application/json
+      parameters:
+        - name: GraphName
+          in: path
+          description: Name of the Graph
+          required: true
+          type: string
+        - in: query
+          name: west
+          required: true
+          type: string
+          description: west brick to link to east brick
+        - in: query
+          name: east
+          required: true
+          type: string
+          description: east brick to link to west brick
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Result'
+  '/graph/{GraphName}/brick/unlink':
+    get:
+      tags:
+        - brick
+      summary: Unlink two bricks
+      operationId: unlinkFromBrick
+      produces:
+        - application/json
+      parameters:
+        - name: GraphName
+          in: path
+          description: Name of the Graph
+          required: true
+          type: string
+        - in: query
+          name: west
+          required: true
+          type: string
+          description: west brick to unlink from east brick
+        - in: query
+          name: east
+          required: true
+          type: string
+          description: east brick to unlink from west brick
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Result'
+  '/graph/{GraphName}/brick/{BrickName}/unlink':
+    get:
+      tags:
+        - brick
+      summary: Remove all links from a brick
+      operationId: unlinkBrick
+      produces:
+        - application/json
+      parameters:
+        - name: GraphName
+          in: path
+          description: Name of the Graph
+          required: true
+          type: string
+        - name: BrickName
+          in: path
+          description: Name of the Brick
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Result'
+  '/graph/{GraphName}/brick/{BrickName}/firewall/rule':
+    get:
+      tags:
+        - firewall
+      summary: Add rule to a firewall brick (need reload)
+      operationId: firewallRuleAdd
+      produces:
+        - application/json
+      parameters:
+        - name: GraphName
+          in: path
+          description: Name of the Graph
+          required: true
+          type: string
+        - name: BrickName
+          in: path
+          description: Name of the Brick
+          required: true
+          type: string
+        - in: query
+          name: filter
+          required: true
+          type: string
+          description: >-
+            BPF filter format encoded in URL. Example: src host 10::1 becomes
+            src%20host%2010%3A%3A1
+        - in: query
+          name: side
+          required: true
+          type: string
+          enum:
+            - west
+            - east
+          description: Side of the firewall where to add the rule
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Result'
+  '/graph/{GraphName}/brick/{BrickName}/firewall/flush':
+    get:
+      tags:
+        - firewall
+      summary: Flush all rules of a firewall (need reload)
+      operationId: firewallFlush
+      produces:
+        - application/json
+      parameters:
+        - name: GraphName
+          in: path
+          description: Name of the Graph
+          required: true
+          type: string
+        - name: BrickName
+          in: path
+          description: Name of the Brick
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Result'
+  '/graph/{GraphName}/brick/{BrickName}/firewall/reload':
+    get:
+      tags:
+        - firewall
+      summary: Reload configuration of a firewall Brick
+      operationId: firewallReload
+      produces:
+        - application/json
+      parameters:
+        - name: GraphName
+          in: path
+          description: Name of the Graph
+          required: true
+          type: string
+        - name: BrickName
+          in: path
+          description: Name of the Brick
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Result'
+definitions:
+  ApiDescription:
+    type: object
+    properties:
+      version:
+        type: string
+        description: API version
+  Graph:
+    type: string
+    description: Graph name
+  Result:
+    type: object
+    properties:
+      status:
+        type: string
+        description: Result of the request
+        enum:
+          - ok
+          - error
+      description:
+        type: string
+        description: Description of the result mostly in case of error
+  GraphDescription:
+    type: object
+    properties:
+      name:
+        type: string
+        description: name of the graph
+      bricks:
+        type: array
+        description: list of bricks name in the graph
+        items:
+          type: string
+  BrickDescription:
+    type: object
+    properties:
+      name:
+        type: string
+        description: name of the brick
+      type_name:
+        type: string
+        description: type of the brick
+        enum:
+          - hub
+          - firewall
+          - nic
+          - tap
+          - nop
+          - switch
