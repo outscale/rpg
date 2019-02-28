@@ -22,7 +22,7 @@ $ ROCKET_ENV=production ./rpg
 
 You can also pass some DPDK options using `PG_DPDK_OPTS`:
 ```
-$ ROCKET_ENV=production PG_DPDK_OPTS="-c1 -n1 --no-huge --no-shconf --lcores 0,1 -l 0,1" ./rpg
+$ ROCKET_ENV=production PG_DPDK_OPTS="-c1 -n1 --no-huge" ./rpg
 ```
 
 # Build RPG from scratch
