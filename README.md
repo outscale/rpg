@@ -46,6 +46,10 @@ In rpg folder, run `cargo build --release`. If you installed packetgraph in a sp
 
 Once built, rpg binary is located in `target/release/rpg`.
 
+# Contributions
+
+No contribution is accepted at the moment on the project
+
 # License: GPLv3
 
 > Copyright 2017 Outscale SAS
