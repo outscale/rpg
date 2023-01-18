@@ -1,4 +1,5 @@
 # RPG - Remote PacketGraph
+[![Project Archived](https://docs.outscale.com/fr/userguide/_images/Project-Archived-red.svg)](https://docs.outscale.com/en/userguide/Open-Source-Projects.html)
 
 This is a quite simple api of [packetgraph](https://github.com/outscale/packetgraph) library written in [Rust](https://www.rust-lang.org/).
 
